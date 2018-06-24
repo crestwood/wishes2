@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" integrity="sha384-WskhaSGFgHYWDcbwN70/dfYBj47jz9qbsMId/iRN3ewGhXQFZCSftd1LZCfmhktB" crossorigin="anonymous">
+    <title>Dashboard</title>
+</head>
+<nav class="navbar navbar-default navbar-static-top">
+        <div class="container">
+            <a href="/logout"  >Logout</a>
+        </div>
+      </nav>
+<div class='container'>
+        <div class='container'>
+            <h1 style="margin: 25px;">Hello, {{user.first_name}}!</h1>
+</div>
+
+<div class='container'>
+        <h3>Your Wish List:</h3>
+        <table class="table">
+            <thead>
+              <tr>
+                <th scope="col">Item</th>
+                <th scope="col">Created By</th>
+                <th scope="col">Date Added</th>
+                <th scope="col">Action</th>
+              </tr>
+            </thead>
+            <tbody>
+                {%for item in items%}
+                    {%if item.created_by_id == user.id%}
+                    <tr>
+                        <th><a href='view_item/{{item.id}}'>{{item.name}}</a></th>
+                        <td>{{item.created_by.first_name}}</td>
+                        <td>{{item.created_at}}</td>
+                        <td>
+                            <form action='/delete' method='post'>
+                                {%csrf_token%}
+                                <input type='hidden'name='item_id' value='{{item.id}}'>
+                                <button type="subit" class="btn btn-link">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {%endif%}
+                {%endfor%}
+                {%for object in user.likes.all%}
+
+                    <tr>
+                        <th><a href='view_item/{{object.id}}'>{{object.name}}</a></th>
+                        <td>{{object.created_by.first_name}}</td>
+                        <td>{{object.created_at}}</td>
+                        <td>
+                            <form action='/remove' method='post'>
+                                    {%csrf_token%}
+                                    <input type='hidden'name='item_id' value='{{object.id}}'>
+                                    <button type="subit" class="btn btn-link">Remove from Wish List</button>
+                            </form>
+                        </td>
+                    </tr>
+                {%endfor%}
+            </tbody>
+        </table>
+</div>
+<div class='container'>
+        <h3>Other Users' Wishes:</h3>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th scope="col">Item</th>
+                    <th scope="col">Added By</th>
+                    <th scope="col">Date Added</th>
+                    <th scope="col">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in otheritems%}
+                    {% if user.id != item.created_by.id %}
+                        
+                        <tr>
+                            <th scope=><a href='view_item/{{item.id}}'>{{item.name}}</a></th>
+                            <td>{{item.created_by.first_name}}</td>
+                            <td>{{item.created_at}}</td>
+                            <td>
+                                <form action='like' method='post'>
+                                    {%csrf_token%}
+                                    <input type='hidden'name='item_id' value='{{item.id}}'>
+                                    <button type="subit" class="btn btn-link">Add to Wish List</button>
+                                </form>
+                        </tr>
+                    {%endif%}
+                {%endfor%}
+            </tbody>
+        </table>
+</div>
+<a href="/additempage"><h4>Add Item</h4></a>
+</body>
+</html>
