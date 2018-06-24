@@ -12,8 +12,12 @@ class UserManager(models.Manager):
             errors['first_name'] = 'First name contains non-alpha characters.'
         if len(postData['first_name']) < 3:
             errors['first_name'] = 'First name should be at least 3 characters.'
+        if len(postData['first_name']) > 255:
+            errors['first_name'] = 'First name should be less than 255 characters.'
         if len(postData['username']) < 3:
             errors['username'] = 'User name should be at least 3 characters.'
+        if len(postData['username']) > 255:
+            errors['username'] = 'User name should be less than 255 characters.'
         # if not re.match(EMAIL_REGEX, postData['email']):
         #     errors['email'] = 'Email is not valid.'
         if not postData['hireddate']:
@@ -34,7 +38,7 @@ class ItemManager(models.Manager):
         if len(postData['item_name']) < 4:
             errors['item_name'] = 'Item name should be at least 4, but less than 20 characters long.'
         if Item.objects.filter(name = postData['item_name']):
-            errors.append('Item already exists.')
+            errors['item_name'] = 'Item already exists.'
         return errors
 
 
